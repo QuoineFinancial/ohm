@@ -23,6 +23,13 @@ local model   = cmsgpack.unpack(ARGV[1])
 local uniques = cmsgpack.unpack(ARGV[2])
 local tracked = cmsgpack.unpack(ARGV[3])
 
+local function log_lua_call(script_name, keys, argv)
+  local log = { script_name, keys, argv }
+  local log_json = cjson.pack(log)
+  redis.call("RPUSH", "LuaCallLog", log_json)
+end
+log_lua_call("ohm_lua_delete", KEYS, ARGV)
+
 local function remove_indices(model)
 	local memo = model.key .. ":_indices"
 	local existing = redis.call("SMEMBERS", memo)
