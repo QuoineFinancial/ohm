@@ -35,13 +35,6 @@ local attrs   = cmsgpack.unpack(ARGV[2])
 local indices = cmsgpack.unpack(ARGV[3])
 local uniques = cmsgpack.unpack(ARGV[4])
 
-local function log_lua_call(script_name, keys, argv)
-  local log = { script_name, keys, argv }
-  local log_json = cjson.encode(log)
-  redis.call("RPUSH", "LuaCallLog", log_json)
-end
-log_lua_call("ohm_lua_save", KEYS, ARGV)
-
 local function save(model, attrs)
 	if model.id == nil then
 		model.id = redis.call("INCR", model.name .. ":id")
