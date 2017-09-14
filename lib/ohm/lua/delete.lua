@@ -25,7 +25,7 @@ local tracked = cmsgpack.unpack(ARGV[3])
 
 local function log_lua_call(script_name, keys, argv)
   local log = { script_name, keys, argv }
-  local log_json = cjson.pack(log)
+  local log_json = cjson.encode(log)
   redis.call("RPUSH", "LuaCallLog", log_json)
 end
 log_lua_call("ohm_lua_delete", KEYS, ARGV)
