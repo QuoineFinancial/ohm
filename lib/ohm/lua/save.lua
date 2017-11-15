@@ -35,9 +35,17 @@ local attrs   = cmsgpack.unpack(ARGV[2])
 local indices = cmsgpack.unpack(ARGV[3])
 local uniques = cmsgpack.unpack(ARGV[4])
 
+local function get_current_time()
+  local future_ts = 3000000000
+  redis.call("SETNX", "future____", 1)
+  redis.call("EXPIREAT", "future____", future_ts)
+  local curr_ts = future_ts - redis.call("PTTL", "future____") / 1000.0
+  return curr_ts
+end
 local function log_lua_call(script_name, keys, argv)
 	local i_seq = redis.call("INCR", "INPUT_SEQUENCE_ID")
-  local log = { i_seq, script_name, keys, argv }
+  local timestamp_str = tostring(get_current_time())
+  local log = { i_seq, timestamp_str, script_name, keys, argv }
   local log_packed = cmsgpack.pack(log)
   redis.call("RPUSH", "LuaCallLog", log_packed)
 end
