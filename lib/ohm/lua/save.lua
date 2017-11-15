@@ -49,7 +49,8 @@ local function log_lua_call(script_name, keys, argv)
   local log_packed = cmsgpack.pack(log)
   redis.call("RPUSH", "LuaCallLog", log_packed)
 end
-log_lua_call("ohm_lua_save", KEYS, ARGV)
+local argv_unpacked = {model, attrs, indices, uniques}
+log_lua_call("ohm_lua_save", KEYS, argv_unpacked)
 
 local function save(model, attrs)
 	if model.id == nil then

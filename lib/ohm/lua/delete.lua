@@ -37,7 +37,8 @@ local function log_lua_call(script_name, keys, argv)
   local log_packed = cmsgpack.pack(log)
   redis.call("RPUSH", "LuaCallLog", log_packed)
 end
-log_lua_call("ohm_lua_delete", KEYS, ARGV)
+local argv_unpacked = {model, uniques, tracked}
+log_lua_call("ohm_lua_delete", KEYS, argv_unpacked)
 
 local function remove_indices(model)
 	local memo = model.key .. ":_indices"
